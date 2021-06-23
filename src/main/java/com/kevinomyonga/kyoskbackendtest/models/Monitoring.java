@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Monitoring {
 
+    @JsonProperty("enabled")
     private String enabled;
 
     public Monitoring() {}
@@ -16,8 +17,6 @@ public class Monitoring {
         this.enabled = enabled;
     }
 
-    @JsonProperty("enabled")
     public String getEnabled() { return enabled; }
-    @JsonProperty("enabled")
     public void setEnabled(String value) { this.enabled = value; }
 }

@@ -39,50 +39,85 @@ public class ConfigService {
     );
     
     // Repository to mock DB and store test and user defined data
-    private List<ConfigDataModel> repository = Arrays.asList(
-        new ConfigDataModel[]{
+    private ArrayList<ConfigDataModel> repository = new ArrayList<>(Arrays.asList(
             configDataEntry1,
-            configDataEntry2,
-        });
+            configDataEntry2
+        ));
 
+    /**
+     * Fetch all configs from repository
+     * @return List of all configs
+     */
     public List<ConfigDataModel> readAll() {
         return repository;
     }
     
+    /**
+     * Fetch specific config from repo
+     * @param name : Name of config
+     * @return specified config
+     */
     public ConfigDataModel read(String name) {
 
-        ConfigDataModel result = null;
-
+        // Iterate through the items stored in the repo
         for (ConfigDataModel configDataModel : repository) {
-            if(configDataModel.getName() == name) {
-                result = configDataModel;
+            if(configDataModel.getName().contains(name)) {
+                return configDataModel;
             }
         }
-        return result;
+        return null;
     }
 
+    /**
+     * Create new config entry in repo
+     * @param configData : Config data to be stored
+     * @return specified config
+     */
     public ConfigDataModel create(ConfigDataModel configData) {
         repository.add(configData);
         return configData;
     }
     
+    /**
+     * Update specific config entry in repo
+     * @param name : Name  of config
+     * @param configData : Data to be used to update specified record 
+     * @return specified config with updated data for confirmation
+     */
     public ConfigDataModel update(String name, ConfigDataModel configData) {
+
+        // Iterate through the items stored in the repo
         for (ConfigDataModel configDataModel : repository) {
-            if(configDataModel.getName() == name) {
-                repository.add(configData);
+            if(configDataModel.getName().contains(name)) {
+                // Get index of selected data in list
+                int index = repository.indexOf(configDataModel);
+
+                // Update the metadata
+                repository.get(index).setMetadata(configData.getMetadata());
+                return configData;
             }
         }
         
-        return configData;
+        return null;
     }
     
-    public void delete(String name) {
+    /**
+     * Delete specific config from repo
+     * @param name: Name  of config
+     * @return specified config
+     */
+    public String delete(String name) {
+        // Iterate through the items stored in the repo
         for (ConfigDataModel configDataModel : repository) {
-            if(configDataModel.getName() == name) {
+            if(configDataModel.getName().contains(name)) {
+                // Remove the selected item from the list
                 repository.remove(configDataModel);
-                return;
+                return "Deleted Config Matching: " + name;
             }
         }
+
+        // Error response incase record not found
+        return "Record Not Found";
     }
 
 }

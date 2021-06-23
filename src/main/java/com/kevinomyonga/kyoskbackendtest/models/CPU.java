@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class CPU {
 
+    @JsonProperty("enabled")
     private String enabled;
+    @JsonProperty("value")
     private String value;
 
     public CPU() {}
@@ -18,13 +20,9 @@ public class CPU {
         this.value = value;
     }
 
-    @JsonProperty("enabled")
     public String getEnabled() { return enabled; }
-    @JsonProperty("enabled")
     public void setEnabled(String value) { this.enabled = value; }
 
-    @JsonProperty("value")
     public String getValue() { return value; }
-    @JsonProperty("value")
     public void setValue(String value) { this.value = value; }
 }

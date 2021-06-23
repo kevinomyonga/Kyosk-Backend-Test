@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Limits {
 
+    @JsonProperty("cpu")
     private CPU cpu;
 
     public Limits() {}
@@ -16,8 +17,6 @@ public class Limits {
         this.cpu = cpu;
     }
 
-    @JsonProperty("cpu")
     public CPU getCPU() { return cpu; }
-    @JsonProperty("cpu")
     public void setCPU(CPU value) { this.cpu = value; }
 }

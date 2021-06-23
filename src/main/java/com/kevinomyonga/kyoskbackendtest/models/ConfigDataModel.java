@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ConfigDataModel {
     
+    @JsonProperty("name")
     private String name;
+    @JsonProperty("metadata")
     private Metadata metadata;
 
     public ConfigDataModel() {}
@@ -18,13 +20,10 @@ public class ConfigDataModel {
         this.metadata = metadata;
     }
 
-    @JsonProperty("name")
+    
     public String getName() { return name; }
-    @JsonProperty("name")
     public void setName(String value) { this.name = value; }
 
-    @JsonProperty("metadata")
     public Metadata getMetadata() { return metadata; }
-    @JsonProperty("metadata")
     public void setMetadata(Metadata value) { this.metadata = value; }
 }
