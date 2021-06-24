@@ -2,8 +2,12 @@ package com.kevinomyonga.kyoskbackendtest.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kevinomyonga.kyoskbackendtest.models.CPU;
 import com.kevinomyonga.kyoskbackendtest.models.ConfigDataModel;
 import com.kevinomyonga.kyoskbackendtest.models.Limits;
@@ -42,7 +46,22 @@ public class ConfigService {
     private ArrayList<ConfigDataModel> repository = new ArrayList<>(Arrays.asList(
             configDataEntry1,
             configDataEntry2
-        ));
+        )
+    );
+
+    /** Create */
+
+    /**
+     * Create new config entry in repo
+     * @param configData : Config data to be stored
+     * @return specified config
+     */
+    public ConfigDataModel create(ConfigDataModel configData) {
+        repository.add(configData);
+        return configData;
+    }
+
+    /** Read */
 
     /**
      * Fetch all configs from repository
@@ -67,16 +86,40 @@ public class ConfigService {
         }
         return null;
     }
-
+    
     /**
-     * Create new config entry in repo
-     * @param configData : Config data to be stored
+     * Fetch specific configs matching search param from repo
+     * @param name : Name of config
      * @return specified config
      */
-    public ConfigDataModel create(ConfigDataModel configData) {
-        repository.add(configData);
-        return configData;
+    public String search(Map<String, String> searchParam) {
+
+        // Initialize variables
+        String searchParamKey = null, searchParamValue = null, searchJsonStr = null;
+
+        for (Map.Entry<String, String> pair : searchParam.entrySet()) {
+            
+            searchParamKey = pair.getKey(); 
+            searchParamValue = pair.getValue(); 
+        }
+
+        searchJsonStr = generateNestedMap(searchParamKey, searchParamValue);
+
+        ArrayList<ConfigDataModel> results = new ArrayList<>();
+
+        // Iterate through the items stored in the repo
+        for (ConfigDataModel configDataModel : repository) {
+
+            String record = objectToJsonString(configDataModel);
+
+            if(record.contains(searchJsonStr)) {
+                results.add(configDataModel);
+            }
+        }
+        return generateNestedMap(searchParamKey, searchParamValue) + "\n" + objectToJsonString(results);
     }
+
+    /** Update */
     
     /**
      * Update specific config entry in repo
@@ -100,6 +143,8 @@ public class ConfigService {
         
         return null;
     }
+
+    /** Delete */
     
     /**
      * Delete specific config from repo
@@ -118,6 +163,46 @@ public class ConfigService {
 
         // Error response incase record not found
         return "Record Not Found";
+    }
+
+    /**
+     * Generate JSON object string
+     * @param path String path to JSON key using dot notation
+     * @param value Value to be set on the final JSON object key
+     * @return Return the map as a JSON string
+     */
+    public String generateNestedMap(String path, Object value) {
+        int end = path.length();
+        for (int start; (start = path.lastIndexOf('.', end - 1)) != -1; end = start) {
+            value = new HashMap<>(Collections.singletonMap(path.substring(start + 1, end), value));
+        }
+        
+        Map<String, Object> map = new HashMap<>(Collections.singletonMap(path.substring(0, end), value));
+
+        // Return the map as a JSON string
+        return objectToJsonString(map);
+    }
+
+    /**
+     * Convert object to JSON string
+     * @param obj Object to be converted
+     * @return JSON string
+     */
+    public String objectToJsonString(Object obj) {
+
+        // Creating Object of ObjectMapper define in Jakson Api
+        ObjectMapper mapper = new ObjectMapper();
+
+        String jsonStr = null;
+        try {
+            // Get Config Data object as a json string
+            jsonStr = mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Returns the JSON string
+        return jsonStr;
     }
 
 }

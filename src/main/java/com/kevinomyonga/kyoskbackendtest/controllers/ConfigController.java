@@ -1,11 +1,12 @@
 package com.kevinomyonga.kyoskbackendtest.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kevinomyonga.kyoskbackendtest.models.ConfigDataModel;
 import com.kevinomyonga.kyoskbackendtest.services.ConfigService;
 
@@ -28,11 +29,8 @@ public class ConfigController {
     @Autowired
     private ConfigService service;
     
-    @GetMapping
-    public List<ConfigDataModel> listConfigs() {
-        return service.readAll();
-    }
-    
+    /** Create */
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public String createConfigs(@RequestBody  ConfigDataModel configData) {
 
@@ -40,16 +38,32 @@ public class ConfigController {
         if (createdConfig == null) {
             return "Config Record Not Found";
         } else {
-            return objectToJsonString(createdConfig);
+            return service.objectToJsonString(createdConfig);
         }
+    }
+
+    /** Read */
+    
+    @GetMapping
+    public List<ConfigDataModel> listConfigs() {
+        return service.readAll();
     }
     
     @GetMapping(value = "/{name}")
     public String getConfigs(@PathVariable String name) {
 
         ConfigDataModel foundConfig = service.read(name);
-        return objectToJsonString(foundConfig);
+        return service.objectToJsonString(foundConfig);
     }
+
+    @GetMapping(value = "/search")
+    public String searchConfigs(@RequestParam Map<String, String> searchParam) {
+
+        String searchResults = service.search(searchParam);
+        return searchResults;
+    }
+
+    /** Update */
 
     @PutMapping(value = "/{name}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String updateConfigs(@PathVariable String name, @RequestBody ConfigDataModel configData) {
@@ -58,29 +72,15 @@ public class ConfigController {
         if (updatedConfig == null) {
             return "Config Record Not Found";
         } else {
-            return objectToJsonString(updatedConfig);
+            return service.objectToJsonString(updatedConfig);
         }
     }
+
+    /** Delete */
 
     @DeleteMapping("/{name}")
     public String deleteConfigs(@PathVariable String name) {
         return service.delete(name);
-    }
-
-    public String objectToJsonString(Object obj) {
-
-        // Creating Object of ObjectMapper define in Jakson Api
-        ObjectMapper mapper = new ObjectMapper();
-
-        String jsonStr = null;
-        try {
-            // Get Config Data object as a json string
-            jsonStr = mapper.writeValueAsString(obj);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jsonStr;
     }
     
 }
