@@ -1,8 +1,9 @@
 package com.kevinomyonga.kyoskbackendtest.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.ApiOperation;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author Kevin Omyonga
  */
 @RestController
-@RequestMapping("/configs")
 public class ConfigController {
 
     @Autowired
@@ -31,7 +31,8 @@ public class ConfigController {
     
     /** Create */
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Create new config entry")
+    @PostMapping(value = "/configs", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String createConfigs(@RequestBody  ConfigDataModel configData) {
 
         ConfigDataModel createdConfig = service.create(configData);
@@ -44,18 +45,21 @@ public class ConfigController {
 
     /** Read */
     
-    @GetMapping
+    @ApiOperation(value = "Retrieve all config entries")
+    @GetMapping(value = "/configs", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ConfigDataModel> listConfigs() {
         return service.readAll();
     }
     
-    @GetMapping(value = "/{name}")
+    @ApiOperation(value = "Retrieve specific config entry")
+    @GetMapping(value = "/configs/{name}")
     public String getConfigs(@PathVariable String name) {
 
         ConfigDataModel foundConfig = service.read(name);
         return service.objectToJsonString(foundConfig);
     }
 
+    @ApiOperation(value = "Retrieve specific config entry by search query")
     @GetMapping(value = "/search")
     public String searchConfigs(@RequestParam Map<String, String> searchParam) {
 
@@ -65,7 +69,8 @@ public class ConfigController {
 
     /** Update */
 
-    @PutMapping(value = "/{name}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Update specific config entry")
+    @PutMapping(value = "/configs/{name}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public String updateConfigs(@PathVariable String name, @RequestBody ConfigDataModel configData) {
 
         ConfigDataModel updatedConfig = service.update(name, configData);
@@ -78,7 +83,8 @@ public class ConfigController {
 
     /** Delete */
 
-    @DeleteMapping("/{name}")
+    @ApiOperation(value = "Delete specific config entry")
+    @DeleteMapping("/configs/{name}")
     public String deleteConfigs(@PathVariable String name) {
         return service.delete(name);
     }
