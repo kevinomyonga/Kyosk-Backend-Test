@@ -2,9 +2,11 @@ package com.kevinomyonga.kyoskbackendtest.controllers;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import io.swagger.annotations.ApiOperation;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ import com.kevinomyonga.kyoskbackendtest.services.ConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,14 +36,22 @@ public class ConfigController {
 
     @ApiOperation(value = "Create new config entry")
     @PostMapping(value = "/configs", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public String createConfigs(@RequestBody  ConfigDataModel configData) {
+    public ResponseEntity<ConfigDataModel> createConfigs(@RequestBody  ConfigDataModel configData) {
 
         ConfigDataModel createdConfig = service.create(configData);
-        if (createdConfig == null) {
+        /* if (createdConfig == null) {
             return "Config Record Not Found";
         } else {
             return service.objectToJsonString(createdConfig);
-        }
+        } */
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{name}")
+            .buildAndExpand(createdConfig.getName())
+            .toUri();
+
+        return ResponseEntity.created(uri)
+            .body(createdConfig);
     }
 
     /** Read */
