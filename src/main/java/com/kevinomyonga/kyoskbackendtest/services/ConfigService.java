@@ -98,8 +98,9 @@ public class ConfigService {
         String searchParamKey = null, searchParamValue = null, searchJsonStr = null;
 
         for (Map.Entry<String, String> pair : searchParam.entrySet()) {
-            
+            // Retrieve param key
             searchParamKey = pair.getKey(); 
+            // Retrieve param value
             searchParamValue = pair.getValue(); 
         }
 
